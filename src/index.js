@@ -41,7 +41,7 @@ const sign = (tx, keypair, networkId) => {
     tx.signatures.push(sig);
 };
 
-export const network = {
+export const networks = {
     public:  StellarSDK.Networks.PUBLIC,
     testnet: StellarSDK.Networks.TESTNET
 };
@@ -51,7 +51,7 @@ export class Issuer {
     constructor({
         horizon = 'https://horizon.stellar.org',
         ipfs = '/ip4/127.0.0.1/tcp/5001',
-        network = network.public,
+        network = networks.public,
         postgres = null
     }) {
         this.horizon = new StellarSDK.Server(horizon);
