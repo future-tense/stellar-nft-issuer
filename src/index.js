@@ -51,9 +51,12 @@ export class Issuer {
 
         const tokenKeys = StellarSDK.Keypair.random();
         const token = tokenKeys.publicKey();
-        data.account = token;
 
-        const dataJson = JSON.stringify(data);
+        const dataJson = JSON.stringify({
+            id:     token,
+            meta:   data
+        });
+
         const dataBuf = Buffer.from(dataJson, 'utf-8');
         const results = await this.ipfs.files.add(dataBuf);
         const hash = results[0].hash;
