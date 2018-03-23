@@ -1,6 +1,6 @@
 {
   "name": "stellar-nft-issuer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a package for issuing non-fungible tokens on the Stellar network",
   "main": "lib/index.js",
   "bin": {
