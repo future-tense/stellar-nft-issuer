@@ -18,6 +18,8 @@
     "ipfs-api": "^18.2.0",
     "ipfs-merkle-dag": "^0.7.3",
     "ipfs-unixfs": "^0.1.14",
+    "json-stringify-safe": "^5.0.1",
+    "multihashes": "^0.4.13",
     "pg-promise": "^8.2.2",
     "stellar-sdk": "^0.8.0"
   },
