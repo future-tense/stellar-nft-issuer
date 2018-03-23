@@ -14,7 +14,7 @@ const transaction = (account, homeDomain, token, owner) => {
     return new StellarSdk.TransactionBuilder(account)
     .addOperation(StellarSdk.Operation.createAccount({
         destination:     token,
-        startingBalance: '1.5'
+        startingBalance: '2'
     }))
     .addOperation(StellarSdk.Operation.setOptions({
         source:       token,
