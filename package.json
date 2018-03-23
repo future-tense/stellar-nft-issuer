@@ -1,7 +1,7 @@
 {
   "name": "stellar-nft-issuer",
   "version": "0.1.0",
-  "description": "",
+  "description": "a package for issuing non-fungible tokens on the Stellar network",
   "main": "lib/index.js",
   "bin": {
     "nft-federation-server": "bin/server.js"
@@ -16,6 +16,8 @@
   "dependencies": {
     "express": "^4.16.3",
     "ipfs-api": "^18.2.0",
+    "ipfs-merkle-dag": "^0.7.3",
+    "ipfs-unixfs": "^0.1.14",
     "pg-promise": "^8.2.2",
     "stellar-sdk": "^0.8.0"
   },
