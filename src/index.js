@@ -1,18 +1,22 @@
 
-import StellarSDK from 'stellar-sdk';
+import StellarSdk from 'stellar-sdk';
 import ipfsAPI from 'ipfs-api';
+import Unixfs from 'ipfs-unixfs';
+import {DAGNode} from 'ipfs-merkle-dag';
 import pgp from 'pg-promise';
+import multihash from 'multihashes';
+import stringifySafe from 'json-stringify-safe';
 
 import {setFederation} from './federation';
 import sign from './sign';
 
 const transaction = (account, homeDomain, token, owner) => {
-    return new StellarSDK.TransactionBuilder(account)
-    .addOperation(StellarSDK.Operation.createAccount({
+    return new StellarSdk.TransactionBuilder(account)
+    .addOperation(StellarSdk.Operation.createAccount({
         destination:     token,
         startingBalance: '1.5'
     }))
-    .addOperation(StellarSDK.Operation.setOptions({
+    .addOperation(StellarSdk.Operation.setOptions({
         source:       token,
         homeDomain:   homeDomain,
         masterWeight: 0,
@@ -24,9 +28,33 @@ const transaction = (account, homeDomain, token, owner) => {
     .build();
 };
 
+const createSignedObject = (issuerKeys, data) => {
+
+    const json = stringifySafe(data);
+    const hash = StellarSdk.hash(json);
+    const signature = issuerKeys.sign(hash).toString('base64');
+
+    return stringifySafe({
+        sig: signature,
+        meta: data
+    });
+};
+
+const getCID = (blob) => {
+    const test = new Unixfs('file', new Buffer(blob));
+    const {Hash} = new DAGNode(test.marshal(), []).toJSON();
+    return Hash;
+};
+
+const getKeypair = cid => {
+    const hash = multihash.fromB58String(cid);
+    const rawHash = multihash.decode(hash).digest;
+    return StellarSdk.Keypair.fromRawEd25519Seed(rawHash);
+};
+
 export const networks = {
-    public:  StellarSDK.Networks.PUBLIC,
-    testnet: StellarSDK.Networks.TESTNET
+    public:  StellarSdk.Networks.PUBLIC,
+    testnet: StellarSdk.Networks.TESTNET
 };
 
 export class Issuer {
@@ -37,9 +65,9 @@ export class Issuer {
         network = networks.public,
         postgres = null
     }) {
-        this.horizon = new StellarSDK.Server(horizon);
+        this.horizon = new StellarSdk.Server(horizon);
         this.ipfs = ipfsAPI(ipfs);
-        this.networkId = StellarSDK.hash(network);
+        this.networkId = StellarSdk.hash(network);
         this.db = pgp()(postgres);
     }
 
@@ -47,28 +75,35 @@ export class Issuer {
         return setFederation(this.db)(account, `${hash}*${homeDomain}`);
     };
 
-    async createToken(sourceKeys, homeDomain, data, owner) {
+    /**
+     *
+     * @param source Keypair
+     * @param issuer Keypair
+     * @param homeDomain string
+     * @param data object
+     * @param owner publicKey
+     * @returns {Promise<*|{value}>}
+     */
+    async createToken(source, issuer, homeDomain, data, owner) {
 
-        const tokenKeys = StellarSDK.Keypair.random();
-        const token = tokenKeys.publicKey();
+        const signedObject = createSignedObject(issuer, data);
+        const cid = getCID(signedObject);
 
-        const dataJson = JSON.stringify({
-            id:     token,
-            meta:   data
-        });
-
-        const dataBuf = Buffer.from(dataJson, 'utf-8');
+        const dataBuf = Buffer.from(signedObject, 'utf-8');
         const results = await this.ipfs.files.add(dataBuf);
         const hash = results[0].hash;
 
-        await this.addFederationRecord(hash, homeDomain, token);
+        if (cid !== hash) {
+            throw new Error('Mismatching CID for object');
+        }
 
-        const source = sourceKeys.publicKey();
-        const account = await this.horizon.loadAccount(source);
-        const tx = transaction(account, homeDomain, token, owner);
+        const token = getKeypair(cid);
+        await this.addFederationRecord(cid, homeDomain, token.publicKey());
+        const account = await this.horizon.loadAccount(source.publicKey());
+        const tx = transaction(account, homeDomain, token.publicKey(), owner);
 
-        sign(tx, sourceKeys, this.networkId);
-        sign(tx, tokenKeys, this.networkId);
+        sign(tx, source, this.networkId);
+        sign(tx, token, this.networkId);
 
         return this.horizon.submitTransaction(tx);
     }
