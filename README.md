@@ -119,3 +119,5 @@ import {Issuer, networks} from 'stellar-nft-issuer';
     console.log(res);
 })();
 ```
+
+Copyright © 2018 Future Tense, LLC
