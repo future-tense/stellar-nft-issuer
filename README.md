@@ -45,9 +45,9 @@ An extra base reserve fee would be added if/when a data entry is used instead of
 
 To run this, you're going to need
 
-* an IPFS server, for storing the token metadata
-* a postgres database, for storing federation data (optional)
-* a webserver/http proxy server, for serving the stellar.toml-file, and (optionally) doing reverse federation
+* an IPFS server -- for storing the token metadata
+* a postgres database -- for storing federation data (optional)
+* a webserver/http proxy server -- for serving the stellar.toml-file, and (optionally) for doing reverse federation
 
 
 ## stellar.toml
