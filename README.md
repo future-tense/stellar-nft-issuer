@@ -28,6 +28,16 @@ Ownership of a token is represented by signing rights.
 
 **NB:** Because tokens are implemented as *accounts*, they are not tradable on the Stellar DEX.
 
+Since `stellar-nft` tokens are implemented using Stellar accounts,
+they fall under the same minimum account balance requirements as regular accounts.
+
+* 2 base reserves fees - the account itself
+* 1 base reserve fee - the additional signer representing the owner
+* 1 base reserve fee - as a buffer for one extra signer when transferring ownership (new signer has to be added before old signer is removed)
+
+Currently that amounts to 2.0 XLM.
+
+An extra base reserve fee would be added if/when a data entry is used instead of reverse federation.
 
 # Installing
 
