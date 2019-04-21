@@ -10,7 +10,7 @@ Other examples might include land titles, artwork, in-game assets, and software 
 
 `stellar-nft-issuer` provides a javascript API, and a runtime environment, for issuing your own NFTs.
 
-#### Implementation details
+### Implementation details
 
 `stellar-nft-issuer` uses Stellar *accounts* to represent its tokens.
 
@@ -96,12 +96,12 @@ nft-federation-server
 
 ```javascript
 import StellarSdk from 'stellar-sdk';
-import {Issuer, networks} from 'stellar-nft-issuer';
+import {Issuer, Networks} from 'stellar-nft-issuer';
 
 (async function() {
     const issuer = new Issuer({
         horizon: 'https://horizon-testnet.stellar.org',
-        network: networks.testnet,
+        network: Networks.TESTNET,
         postgres: 'postgres://kittens:password@localhost/kittens'
     });
 
@@ -120,4 +120,4 @@ import {Issuer, networks} from 'stellar-nft-issuer';
 })();
 ```
 
-Copyright © 2018 Future Tense, LLC
+Copyright © 2018-2019 Future Tense, LLC

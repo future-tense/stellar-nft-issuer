@@ -1,6 +1,6 @@
 {
   "name": "stellar-nft-issuer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "a package for issuing non-fungible tokens on the Stellar network",
   "main": "lib/index.js",
   "bin": {
@@ -8,23 +8,23 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "babel --presets env -d lib/ src/",
-    "prepublish": "npm run compile"
+    "clean": "rm -rf dist",
+    "compile": "npx tsc",
+    "prepare": "npm run compile"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Johan Stén <johan@futuretense.io>",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.16.3",
-    "ipfs-api": "^18.2.0",
-    "ipfs-merkle-dag": "^0.7.3",
-    "ipfs-unixfs": "^0.1.14",
+    "axios": "^0.18.0",
+    "bs58": "^4.0.1",
+    "express": "^4.16.4",
+    "ipfs-http-client": "^30.1.3",
     "json-stringify-safe": "^5.0.1",
-    "multihashes": "^0.4.13",
-    "pg-promise": "^8.2.2",
-    "stellar-sdk": "^0.8.0"
+    "pg-promise": "^8.6.5",
+    "stellar-sdk": "^0.15.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "@types/node": "^11.13.6",
+    "typescript": "^3.4.4"
   }
 }

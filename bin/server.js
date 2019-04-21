@@ -1,8 +1,8 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env node
 
 const express = require ('express');
 const pgp = require('pg-promise');
-const {queryFederation} = require('../lib/federation');
+const { queryFederation } = require('../lib/federation');
 
 const allowCORS = (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
